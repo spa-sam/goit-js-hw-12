@@ -15,7 +15,7 @@ const options = {
 };
 
 const params = new URLSearchParams(options);
-const BASE_URL = `${options.base}?${params}`;
+const BASE_URL = options.base;
 
 function createInfoBlock(title, value) {
   return `
@@ -72,18 +72,29 @@ const toastOptions = {
   theme: 'dark',
   messageSize: '322px',
 };
+const gallery =
+  document.querySelector('.gallery') || createGalleryElement(container);
+const form = document.querySelector('form');
+const loader = document.querySelector('.loader');
+const input = document.querySelector('input');
 
-document.querySelector('form').addEventListener('submit', function (event) {
+form.addEventListener('submit', function (event) {
   event.preventDefault();
-  const gallery =
-    document.querySelector('.gallery') || createGalleryElement(container);
   gallery.innerHTML = '';
-  const loader = document.querySelector('.loader');
   loader.style.display = 'block';
-  const searchQuery = document.querySelector('input').value;
+  const searchQuery = input.value.trim();
+  if (!searchQuery) {
+    loader.style.display = 'none';
+    iziToast.warning({
+      ...toastOptions,
+      message: 'Please enter your search query!',
+    });
+    return;
+  }
+  form.reset();
   params.set('q', searchQuery);
 
-  fetch(`${BASE_URL}?${params.toString()}`)
+  fetch(`${BASE_URL}?${params}`)
     .then(response => response.json())
     .then(data => {
       if (data.hits.length === 0) {
@@ -94,7 +105,7 @@ document.querySelector('form').addEventListener('submit', function (event) {
           gallery.insertAdjacentHTML('beforeend', markup);
         });
       }
-      document.querySelector('form').reset();
+
       lightbox.refresh();
       loader.style.display = 'none';
     })

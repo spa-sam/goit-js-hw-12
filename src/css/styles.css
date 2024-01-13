@@ -22,13 +22,11 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
 .container {
   width: 1440px;
   height: 420px;
   display: flex;
-  /* justify-content: center; */
-
-  /* элементы в колонку */
   flex-direction: column;
 }
 
@@ -43,7 +41,6 @@
   display: inline-flex;
   padding: 8px 16px;
   margin-right: 8px;
-
   width: 272px;
   height: 40px;
   border-radius: 4px;
@@ -63,7 +60,6 @@
 }
 .search-input:focus {
   border: 1px solid #4e75ff;
-
   color: #2e2f42;
   font-family: Montserrat, sans-serif;
   font-size: 16px;
@@ -95,7 +91,7 @@
   background-color: #6c8cff;
   cursor: pointer;
 }
-
+/*========================================================style for loader========================================================*/
 .loader {
   width: 16px;
   height: 16px;
@@ -123,7 +119,7 @@
     box-shadow: -24px 0 #fff, 24px 0 #ff3d00;
   }
 }
-
+/*========================================================style  for card gallery========================================================*/
 .linkStyle {
   display: block;
 }
