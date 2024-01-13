@@ -1,5 +1,7 @@
 'use strict';
 
+import axios from 'axios';
+
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
@@ -78,6 +80,31 @@ const form = document.querySelector('form');
 const loader = document.querySelector('.loader');
 const input = document.querySelector('input');
 
+async function fetchData() {
+  try {
+    const response = await axios.get(`${BASE_URL}?${params}`);
+    const data = response.data;
+    if (data.hits.length === 0) {
+      iziToast.warning(toastOptions);
+    } else {
+      data.hits.forEach(image => {
+        const markup = createImageCardMarkup(image);
+        gallery.insertAdjacentHTML('beforeend', markup);
+      });
+    }
+
+    lightbox.refresh();
+    loader.style.display = 'none';
+  } catch (error) {
+    console.error('Error:', error);
+    loader.style.display = 'none';
+    iziToast.error({
+      ...toastOptions,
+      message: 'An error occurred. Please try again later.',
+    });
+  }
+}
+
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   gallery.innerHTML = '';
@@ -94,27 +121,5 @@ form.addEventListener('submit', function (event) {
   form.reset();
   params.set('q', searchQuery);
 
-  fetch(`${BASE_URL}?${params}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.hits.length === 0) {
-        iziToast.warning(toastOptions);
-      } else {
-        data.hits.forEach(image => {
-          const markup = createImageCardMarkup(image);
-          gallery.insertAdjacentHTML('beforeend', markup);
-        });
-      }
-
-      lightbox.refresh();
-      loader.style.display = 'none';
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      loader.style.display = 'none';
-      iziToast.error({
-        ...toastOptions,
-        message: 'An error occurred. Please try again later.',
-      });
-    });
+  fetchData();
 });
