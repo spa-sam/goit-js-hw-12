@@ -131,6 +131,7 @@ async function fetchData() {
       });
       // переносимо  контейнер з кнопкою і загрузчиком в кінець галереї
       gallery.insertAdjacentElement('afterend', btnLoaderContainer);
+      gallery.classList.add('custom-gallery-style'); // додаємо стилі галереї
     }
 
     lightbox.refresh();
@@ -164,6 +165,7 @@ async function fetchData() {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   gallery.innerHTML = '';
+  gallery.classList.remove('custom-gallery-style'); // видаляємо стилі галереї щоб вони не впливали на кнопку і загрузчик
   loader.style.display = 'block';
   loadMoreBtn.style.display = 'none';
   params.set('page', 1);
