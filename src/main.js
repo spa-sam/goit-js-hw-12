@@ -178,6 +178,7 @@ form.addEventListener('submit', function (event) {
   }
   form.reset();
   params.set('q', searchQuery);
+  requestCount = 0; // обнуляємо лічильник запитів
   setTimeout(fetchData, 2000); // для демо завантаження
 });
 
