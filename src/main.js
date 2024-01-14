@@ -113,12 +113,16 @@ btnLoaderContainer.appendChild(loadMoreBtn);
 btnLoaderContainer.appendChild(loader);
 form.insertAdjacentElement('afterend', btnLoaderContainer);
 
+let totalHits = 0; // загальна кількість картинок
+let requestCount = 0; // лічильник запитів
+
 // функція для отримання даних
 async function fetchData() {
   try {
     loader.style.display = 'block';
     const response = await axios.get(`${BASE_URL}?${params}`);
     const data = response.data;
+    totalHits = data.totalHits; // зберігаємо totalHits
     if (data.hits.length === 0) {
       iziToast.warning(toastOptions);
     } else {
@@ -133,6 +137,21 @@ async function fetchData() {
 
     lightbox.refresh();
     loader.style.display = 'none';
+
+    requestCount++;
+
+    // Отримуємо першу карточку галереї
+    const card = document.querySelector('.image-card');
+    if (card && requestCount > 1) {
+      // якщо карточка і запитів більше одного
+      // Отримуємо висоту карточки
+      const cardHeight = card.getBoundingClientRect().height;
+      // Прокручуємо сторінку на дві висоти карточки
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+    }
   } catch (error) {
     console.error('Error:', error);
     loader.style.display = 'none';
@@ -171,4 +190,12 @@ loadMoreBtn.addEventListener('click', function () {
   page++;
   params.set('page', page);
   setTimeout(fetchData, 2000); // для демо завантаження
+  if (page * perPage >= totalHits) {
+    loadMoreBtn.style.display = 'none';
+    loader.style.display = 'none';
+    iziToast.warning({
+      ...toastOptions,
+      message: "We're sorry, but you've reached the end of search results.",
+    });
+  }
 });
