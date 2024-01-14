@@ -8,6 +8,7 @@ import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+// опції для пошуку
 const options = {
   base: 'https://pixabay.com/api/',
   key: '41493530-c71176b83a18405cd33ba2537',
@@ -16,9 +17,17 @@ const options = {
   safesearch: 'true',
 };
 
+let page = 1;
+const perPage = 40;
+
+// створюємо параметри для пошуку
 const params = new URLSearchParams(options);
 const BASE_URL = options.base;
 
+params.set('page', page);
+params.set('per_page', perPage);
+
+// створюємо розмітку для інформації про картинку
 function createInfoBlock(title, value) {
   return `
     <div class="info-block">
@@ -28,6 +37,7 @@ function createInfoBlock(title, value) {
   `;
 }
 
+// створюємо розмітку для картинки
 function createImageCardMarkup({
   largeImageURL,
   webformatURL,
@@ -56,6 +66,7 @@ const lightbox = new SimpleLightbox('.lightbox-image', {
   captionDelay: 250,
 });
 
+// створюємо галерею
 function createGalleryElement(parentElement) {
   const gallery = document.createElement('div');
   gallery.className = 'gallery custom-gallery-style';
@@ -64,6 +75,7 @@ function createGalleryElement(parentElement) {
 }
 
 const container = document.querySelector('.container');
+// опції для повідомлень
 const toastOptions = {
   title: '',
   message:
@@ -74,23 +86,49 @@ const toastOptions = {
   theme: 'dark',
   messageSize: '322px',
 };
+
+// створюємо елементи
 const gallery =
   document.querySelector('.gallery') || createGalleryElement(container);
 const form = document.querySelector('form');
-const loader = document.querySelector('.loader');
 const input = document.querySelector('input');
 
+const loader = document.createElement('div');
+loader.classList.add('loader-text');
+loader.style.display = 'none';
+loader.textContent = 'Loading images, please wait...';
+
+// Створюємо кнопку "Load more"
+let loadMoreBtn = document.querySelector('.load-more-btn');
+if (!loadMoreBtn) {
+  loadMoreBtn = document.createElement('button');
+  loadMoreBtn.classList.add('load-more-btn');
+  loadMoreBtn.textContent = 'Load more';
+  loadMoreBtn.style.display = 'none';
+}
+// Створюємо контейнер для кнопки і загрузчика
+const btnLoaderContainer = document.createElement('div');
+btnLoaderContainer.classList.add('btn-loader-container');
+btnLoaderContainer.appendChild(loadMoreBtn);
+btnLoaderContainer.appendChild(loader);
+form.insertAdjacentElement('afterend', btnLoaderContainer);
+
+// функція для отримання даних
 async function fetchData() {
   try {
+    loader.style.display = 'block';
     const response = await axios.get(`${BASE_URL}?${params}`);
     const data = response.data;
     if (data.hits.length === 0) {
       iziToast.warning(toastOptions);
     } else {
+      loadMoreBtn.style.display = 'block';
       data.hits.forEach(image => {
         const markup = createImageCardMarkup(image);
         gallery.insertAdjacentHTML('beforeend', markup);
       });
+      // переносимо  контейнер з кнопкою і загрузчиком в кінець галереї
+      gallery.insertAdjacentElement('afterend', btnLoaderContainer);
     }
 
     lightbox.refresh();
@@ -105,10 +143,13 @@ async function fetchData() {
   }
 }
 
+//  пошук по формі
 form.addEventListener('submit', function (event) {
   event.preventDefault();
   gallery.innerHTML = '';
   loader.style.display = 'block';
+  loadMoreBtn.style.display = 'none';
+  params.set('page', 1);
   const searchQuery = input.value.trim();
   if (!searchQuery) {
     loader.style.display = 'none';
@@ -120,6 +161,14 @@ form.addEventListener('submit', function (event) {
   }
   form.reset();
   params.set('q', searchQuery);
+  setTimeout(fetchData, 2000); // для демо завантаження
+});
 
-  fetchData();
+// Кнопка "Load more"
+loadMoreBtn.addEventListener('click', function () {
+  loadMoreBtn.style.display = 'none';
+  loader.style.display = 'block';
+  page++;
+  params.set('page', page);
+  setTimeout(fetchData, 2000); // для демо завантаження
 });

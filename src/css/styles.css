@@ -92,7 +92,7 @@
   cursor: pointer;
 }
 /*========================================================style for loader========================================================*/
-.loader {
+/* .loader {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -103,9 +103,9 @@
   box-shadow: -24px 0 #fff, 24px 0 #fff;
   box-sizing: border-box;
   animation: shadowPulse 2s linear infinite;
-}
+} */
 
-@keyframes shadowPulse {
+/* @keyframes shadowPulse {
   33% {
     background: #fff;
     box-shadow: -24px 0 #ff3d00, 24px 0 #fff;
@@ -118,7 +118,7 @@
     background: #fff;
     box-shadow: -24px 0 #fff, 24px 0 #ff3d00;
   }
-}
+} */
 /*========================================================style  for card gallery========================================================*/
 .linkStyle {
   display: block;
@@ -152,7 +152,7 @@
   flex-wrap: wrap;
   justify-content: center;
   margin: 0 auto;
-  padding: 32px;
+  padding: 32px 32px 0 32px;
   gap: 24px;
 }
 
@@ -160,4 +160,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* ====================load more button and loader=============== */
+
+.btn-loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 32px;
+  padding-bottom: 36px;
+}
+
+.loader-text {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #2e2f42;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+.load-more-btn {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #4e75ff;
+  color: #fff;
+  font-family: Montserrat, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.load-more-btn:hover {
+  background-color: #6c8cff;
+  cursor: pointer;
 }
